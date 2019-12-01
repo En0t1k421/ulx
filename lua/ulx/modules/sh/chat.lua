@@ -188,6 +188,7 @@ function ulx.gimp( calling_ply, target_plys, time, should_ungimp )
 			for i=1, #target_plys do
 				local v = target_plys[ i ]
 				v:SetNWBool("ulx_gimped", false)
+				v.gimp = nil
 			end
 			timer.Remove("UNAGI")
 		end)
@@ -233,6 +234,7 @@ if SERVER then
 			for i=1, #target_plys do
 				local v = target_plys[ i ]
 				v:SetNWBool("ulx_muted", false)
+				v.gimp = nil
 			end
 			timer.Remove("UNAM")
 		end)
@@ -287,6 +289,7 @@ if SERVER then
 			for i=1, #target_plys do
 				local v = target_plys[ i ]
 				v:SetNWBool("ulx_gagged", false)
+				v.ulx_gagged = false
 			end
 			timer.Remove("UNAG")
 		end)
