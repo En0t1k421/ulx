@@ -165,7 +165,7 @@ function ulx.clearGimpSays()
 	table.Empty( gimpSays )
 end
 
-function ulx.gimp( calling_ply, target_plys, should_ungimp )
+function ulx.gimp( calling_ply, target_plys, time, should_ungimp )
 	for i=1, #target_plys do
 		local v = target_plys[ i ]
 		if should_ungimp then
@@ -176,21 +176,42 @@ function ulx.gimp( calling_ply, target_plys, should_ungimp )
 		v:SetNWBool("ulx_gimped", not should_ungimp)
 	end
 
-	if not should_ungimp then
-		ulx.fancyLogAdmin( calling_ply, "#A gimped #T", target_plys )
+	if SERVER then
+		if should_ungimp then
+			if timer.Exists("UNAGI") then
+				timer.Remove("UNAGI")
+			end
+		end
+		
+		if time ~= 0 and not should_ungimp then
+		timer.Create("UNAGI",time,1,function()
+			for i=1, #target_plys do
+				local v = target_plys[ i ]
+				v:SetNWBool("ulx_gimped", false)
+			end
+			timer.Remove("UNAGI")
+		end)
+	end
+	end
+
+	if not should_ungimp and time ~= 0 then
+		ulx.fancyLogAdmin( calling_ply, "#A gimped #T for #i seconds.", target_plys, time )
+	elseif time == 0 and not should_ungimp then
+		ulx.fancyLogAdmin( calling_ply, "#A gimped #T", target_plys)
 	else
-		ulx.fancyLogAdmin( calling_ply, "#A ungimped #T", target_plys )
+		ulx.fancyLogAdmin( calling_ply, "#A ungimped #T", target_plys  )
 	end
 end
 local gimp = ulx.command( CATEGORY_NAME, "ulx gimp", ulx.gimp, "!gimp" )
 gimp:addParam{ type=ULib.cmds.PlayersArg }
+gimp:addParam{ type=ULib.cmds.NumArg, hint="Gimp time" }
 gimp:addParam{ type=ULib.cmds.BoolArg, invisible=true }
 gimp:defaultAccess( ULib.ACCESS_ADMIN )
-gimp:help( "Gimps target(s) so they are unable to chat normally." )
+gimp:help( "Gimps target(s) so they are unable to chat normally for a certain amount of time or until ungimped (0)." )
 gimp:setOpposite( "ulx ungimp", {_, _, true}, "!ungimp" )
 
 ------------------------------ Mute ------------------------------
-function ulx.mute( calling_ply, target_plys, should_unmute )
+function ulx.mute( calling_ply, target_plys, time, should_unmute )
 	for i=1, #target_plys do
 		local v = target_plys[ i ]
 		if should_unmute then
@@ -200,18 +221,38 @@ function ulx.mute( calling_ply, target_plys, should_unmute )
 		end
 		v:SetNWBool("ulx_muted", not should_unmute)
 	end
+if SERVER then
+		if should_unmute then
+			if timer.Exists("UNAM") then
+				timer.Remove("UNAM")
+			end
+		end
 
-	if not should_unmute then
-		ulx.fancyLogAdmin( calling_ply, "#A muted #T", target_plys )
+		if time ~= 0 and not should_unmute then
+		timer.Create("UNAM",time,1,function()
+			for i=1, #target_plys do
+				local v = target_plys[ i ]
+				v:SetNWBool("ulx_muted", false)
+			end
+			timer.Remove("UNAM")
+		end)
+	end
+end
+
+	if not should_unmute and time ~= 0 then
+		ulx.fancyLogAdmin( calling_ply, "#A muted #T for #i seconds.", target_plys, time )
+	elseif time == 0 and not should_unmute then
+		ulx.fancyLogAdmin( calling_ply, "#A muted #T", target_plys)
 	else
 		ulx.fancyLogAdmin( calling_ply, "#A unmuted #T", target_plys )
 	end
 end
 local mute = ulx.command( CATEGORY_NAME, "ulx mute", ulx.mute, "!mute" )
 mute:addParam{ type=ULib.cmds.PlayersArg }
+mute:addParam{ type=ULib.cmds.NumArg, hint="Mute time" }
 mute:addParam{ type=ULib.cmds.BoolArg, invisible=true }
 mute:defaultAccess( ULib.ACCESS_ADMIN )
-mute:help( "Mutes target(s) so they are unable to chat." )
+mute:help( "Mutes target(s) so they are unable to chat for a certain amount of time or until unmuted (0)." )
 mute:setOpposite( "ulx unmute", {_, _, true}, "!unmute" )
 
 if SERVER then
@@ -226,7 +267,7 @@ if SERVER then
 end
 
 ------------------------------ Gag ------------------------------
-function ulx.gag( calling_ply, target_plys, should_ungag )
+function ulx.gag( calling_ply, target_plys, time, should_ungag )
 	local players = player.GetAll()
 	for i=1, #target_plys do
 		local v = target_plys[ i ]
@@ -234,17 +275,41 @@ function ulx.gag( calling_ply, target_plys, should_ungag )
 		v:SetNWBool("ulx_gagged", v.ulx_gagged)
 	end
 
-	if not should_ungag then
-		ulx.fancyLogAdmin( calling_ply, "#A gagged #T", target_plys )
+if SERVER then
+		if should_ungag then
+			if timer.Exists("UNAG") then
+				timer.Remove("UNAG")
+			end
+		end
+
+		if time ~= 0 and not should_ungag then
+		timer.Create("UNAG",time,1,function()
+			for i=1, #target_plys do
+				local v = target_plys[ i ]
+				v:SetNWBool("ulx_gagged", false)
+			end
+			timer.Remove("UNAG")
+		end)
+		end
+	end
+
+
+
+
+	if not should_ungag and time ~= 0 then
+		ulx.fancyLogAdmin( calling_ply, "#A gagged #T for #i seconds.", target_plys, time )
+	elseif time == 0 and not should_ungag then
+		ulx.fancyLogAdmin( calling_ply, "#A gagged #T", target_plys)
 	else
 		ulx.fancyLogAdmin( calling_ply, "#A ungagged #T", target_plys )
 	end
 end
 local gag = ulx.command( CATEGORY_NAME, "ulx gag", ulx.gag, "!gag" )
 gag:addParam{ type=ULib.cmds.PlayersArg }
+gag:addParam{ type=ULib.cmds.NumArg, hint="Gag time" }
 gag:addParam{ type=ULib.cmds.BoolArg, invisible=true }
 gag:defaultAccess( ULib.ACCESS_ADMIN )
-gag:help( "Gag target(s), disables microphone." )
+gag:help( "Gag target(s), disables microphone for a certain amount of time or until ungagged (0)." )
 gag:setOpposite( "ulx ungag", {_, _, true}, "!ungag" )
 
 local function gagHook( listener, talker )
