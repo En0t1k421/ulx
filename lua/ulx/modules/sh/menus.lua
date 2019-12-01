@@ -4,8 +4,8 @@ if ULib.fileExists( "lua/ulx/modules/cl/motdmenu.lua" ) or ulx.motdmenu_exists t
 	local function sendMotd( ply, showMotd )
 		if ply.ulxHasMotd then return end -- This player already has the motd data
 		if showMotd == "1" then -- Assume it's a file
-			if not ULib.fileExists( GetConVarString( "ulx_motdfile" ) ) then return end -- Invalid
-			local f = ULib.fileRead( GetConVarString( "ulx_motdfile" ) )
+			if not ULib.fileExists( GetConVar( "ulx_motdfile" ):GetString() ) then return end -- Invalid
+			local f = ULib.fileRead( GetConVar( "ulx_motdfile" ):GetString() )
 
 			ULib.clientRPC( ply, "ulx.rcvMotd", showMotd, f )
 
@@ -13,13 +13,13 @@ if ULib.fileExists( "lua/ulx/modules/cl/motdmenu.lua" ) or ulx.motdmenu_exists t
 			ULib.clientRPC( ply, "ulx.rcvMotd", showMotd, ulx.motdSettings )
 
 		else -- Assume URL
-			ULib.clientRPC( ply, "ulx.rcvMotd", showMotd, GetConVarString( "ulx_motdurl" ) )
+			ULib.clientRPC( ply, "ulx.rcvMotd", showMotd, GetConVar( "ulx_motdurl" ):GetString() )
 		end
 		ply.ulxHasMotd = true
 	end
 
 	local function showMotd( ply )
-		local showMotd = GetConVarString( "ulx_showMotd" )
+		local showMotd = GetConVar( "ulx_showMotd" ):GetString()
 		if showMotd == "0" then return end
 		if not ply:IsValid() then return end -- They left, doh!
 
@@ -47,12 +47,12 @@ if ULib.fileExists( "lua/ulx/modules/cl/motdmenu.lua" ) or ulx.motdmenu_exists t
 			return
 		end
 
-		if GetConVarString( "ulx_showMotd" ) == "0" then
+		if GetConVar( "ulx_showMotd" ):GetString() == "0" then
 			ULib.tsay( calling_ply, "The MOTD has been disabled on this server." )
 			return
 		end
 
-		if GetConVarString( "ulx_showMotd" ) == "1" and not ULib.fileExists( GetConVarString( "ulx_motdfile" ) ) then
+		if GetConVar( "ulx_showMotd" ):GetString() == "1" and not ULib.fileExists( GetConVar( "ulx_motdfile" ):GetString() ) then
 			ULib.tsay( calling_ply, "The MOTD file could not be found." )
 			return
 		end
