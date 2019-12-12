@@ -181,7 +181,7 @@ function ulx.gimp( calling_ply, target_plys, time, should_ungimp )
 			timer.Remove("UNAGI")
 		end
 
-		if time ~= 0 and not should_ungimp then
+		if time ~= 0 or nil and not should_ungimp then
 		timer.Create("UNAGI",time,1,function()
 			for i = 1, #target_plys do
 				local v = target_plys[ i ]
@@ -225,7 +225,7 @@ if SERVER then
 			timer.Remove("UNAM")
 		end
 
-		if time ~= 0 and not should_unmute then
+		if time ~= 0 or nil and not should_unmute then
 		timer.Create("UNAM",time,1,function()
 			for i = 1, #target_plys do
 				local v = target_plys[ i ]
@@ -280,7 +280,7 @@ if SERVER then
 			timer.Remove("UNAG")
 		end
 
-		if time ~= 0 and not should_ungag then
+		if time ~= 0 or nil and not should_ungag then
 		timer.Create("UNAG",time,1,function()
 			for i = 1, #target_plys do
 				local v = target_plys[ i ]
